@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Red SocialTuristico</string>
+    <string name="search">Buscar...</string>
+    <string name="location">Localizar</string>
+    <string name="dato">Datos</string>
+    <string name="btn_driver">Conductor</string>
+    <string name="btn_client">Cliente</string>
+
+    <string name="name_Firts">Nombres</string>
+    <string name="name_Last">Apellidos</string>
+    <string name="name_User">Nombre de Usuario</string>
+    <string name="password">Clave</string>
+    <string name="email">Correo electrónico</string>
+
+    <string name="company">Company DTK</string>
+</resources>
