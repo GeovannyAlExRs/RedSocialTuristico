@@ -9,19 +9,19 @@ import android.widget.TextView;
 
 import com.app.dtk.redsocialturistico.R;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
-    private TextView textRegister;
+    //private TextView textRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getViewId();
+        //getViewId();
     }
 
-    private void getViewId() {
+    /*private void getViewId() {
         textRegister = findViewById(R.id.id_txt_register);
         textRegister.setOnClickListener(this);
     }
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.id_btn_enter:
+            case R.id.id_btn_register:
                 goToView(RegisterActivity.class);
                 break;
         }
@@ -38,5 +38,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void goToView(Class activiyClass) {
         Intent intent = new Intent(MainActivity.this, activiyClass);
         startActivity(intent);
-    }
+    }*/
 }

@@ -36,12 +36,15 @@
                 android:textAlignment="center"
                 android:layout_marginTop="@dimen/space8"/>
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/logo_turismo"
                 android:layout_gravity="center"
-                android:layout_marginTop="5dp"/>
+                android:layout_marginTop="5dp"
+                app:civ_border_color="@color/colorBackgroundContainer"
+                app:civ_circle_background_color="@color/colorBackgroundContainer"
+                app:civ_border_width="2dp"/>
 
         </com.github.florent37.shapeofview.shapes.ArcView>
 

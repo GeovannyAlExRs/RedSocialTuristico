@@ -89,10 +89,10 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/id_btn_enter"
+                android:id="@+id/id_btn_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ingresar"
+                android:text="Login"
                 android:textColor="@color/colorWhite"
                 android:background="@drawable/btn_rounded"
                 android:backgroundTint="@color/colorPrimaryText"
@@ -101,8 +101,16 @@
                 android:layout_marginLeft="@dimen/space8"
                 android:layout_marginRight="@dimen/space8"/>
 
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/id_btn_signInGoogle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
+
         </androidx.appcompat.widget.LinearLayoutCompat>
+
         <TextView
+            android:id="@+id/id_txt_recuperarPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Olvidaste tu clave"

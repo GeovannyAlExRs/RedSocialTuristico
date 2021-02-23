@@ -1,5 +1,6 @@
 package com.app.dtk.redsocialturistico.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
@@ -9,8 +10,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.app.dtk.redsocialturistico.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,12 +31,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private TextInputEditText txt_nameUser, txt_email, txt_password, confirmPassword;
     private AppCompatButton btn_register;
 
+    FirebaseAuth firebaseAuth;
+    FirebaseFirestore firebaseFirestore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
         getViewId();
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
     }
 
     private void getViewId() {
@@ -65,7 +78,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         if(!nameUser.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()) {
             if (isEmailValid(email)) {
-                Toast.makeText(this, "Bienvenido " + nameUser,Toast.LENGTH_LONG).show();
+                if (password.equals(confirmPassword)) {
+                    Toast.makeText(this, "Bienvenido " + nameUser,Toast.LENGTH_LONG).show();
+                    if (password.length() >= 8) {
+                        saveUser(nameUser, email, password);
+                    } else {
+                        Toast.makeText(this, "La clave debe ser mayor a 8 caracteres",Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(this, "Las claves no coinciden",Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(this, "Email Incorrecto" + email,Toast.LENGTH_LONG).show();
             }
@@ -76,13 +98,39 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
+    private void saveUser(final String nameUser, final String email, final String password) {
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    String idDoc = firebaseAuth.getCurrentUser().getUid();
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("userName", nameUser);
+                    map.put("email", email);
+                    map.put("password", password);
+                    firebaseFirestore.collection("Users").document(idDoc).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(RegisterActivity.this, "El usuario se registro correctamente en la BD", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(RegisterActivity.this, "El usuario NO se registro correctamente en la BD", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(RegisterActivity.this, "El usuario NO se registro correctamente", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     public boolean isEmailValid(String email) {
         String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
-
 
     private void goToView(Class activiyClass) {
         Intent intent = new Intent(this, activiyClass);

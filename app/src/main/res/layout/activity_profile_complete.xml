@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".activity.ProfileCompleteActivity">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.github.florent37.shapeofview.shapes.ArcView
+            android:layout_width="match_parent"
+            android:layout_height="175dp"
+            android:elevation="0dp"
+            app:shape_arc_cropDirection="outside"
+            app:shape_arc_height="20dp"
+            app:shape_arc_position="bottom">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PERFIL DE USUARIO"
+                android:textStyle="bold"
+                android:textSize="@dimen/space16"
+                android:textColor="@color/colorPrimaryLight"
+                android:textAlignment="center"
+                android:layout_marginTop="35dp"/>
+
+
+
+        </com.github.florent37.shapeofview.shapes.ArcView>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/container_white"
+            android:backgroundTint="@color/colorBackgroundContainer"
+            android:padding="20dp"
+            android:layout_marginTop="@dimen/space56"
+            android:layout_marginLeft="@dimen/space24"
+            android:layout_marginRight="@dimen/space24">
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="2dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/name_User"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/id_txt_nameUser"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textSize="@dimen/h5"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/id_btn_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Confirmar"
+                android:textColor="@color/colorWhite"
+                android:background="@drawable/btn_rounded"
+                android:backgroundTint="@color/colorPrimaryText"
+                android:layout_marginTop="@dimen/space24"
+                android:layout_marginLeft="@dimen/space8"
+                android:layout_marginRight="@dimen/space8"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/id_circleBack"
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/logo_turismo"
+        android:layout_gravity="top|center"
+        app:civ_border_color="@color/colorBackgroundContainer"
+        app:civ_circle_background_color="@color/colorBackgroundContainer"
+        app:civ_border_width="2dp"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
