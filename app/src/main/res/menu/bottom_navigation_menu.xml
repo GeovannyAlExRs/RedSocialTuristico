@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/id_item_navigation_home"
+        android:title="Home"
+        android:icon="@drawable/ic_home_solid"/>
+
+    <item android:id="@+id/id_item_navigation_filtro"
+        android:title="Filtro"
+        android:icon="@drawable/ic_list_alt_solid"/>
+
+    <item android:id="@+id/id_item_navigation_chat"
+        android:title="Chat"
+        android:icon="@drawable/ic_chat_solid"/>
+
+    <item android:id="@+id/id_item_navigation_perfil"
+        android:title="Perfil"
+        android:icon="@drawable/ic_user_solid"/>
+</menu>

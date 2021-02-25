@@ -3,15 +3,22 @@ package com.app.dtk.redsocialturistico.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.LinearLayoutCompat;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.dtk.redsocialturistico.R;
+import com.app.dtk.redsocialturistico.model.Users;
+import com.app.dtk.redsocialturistico.providers.AuthFirebaseProvider;
+import com.app.dtk.redsocialturistico.providers.UsersFirestoreProvider;
+import com.github.ybq.android.spinkit.style.FadingCircle;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -22,16 +29,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -39,9 +38,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextInputEditText txt_email, txt_password;
     private AppCompatButton btn_login;
     private SignInButton btn_signInGoogle;
+    private ProgressBar progressBar;
+    private  LinearLayoutCompat linearLayoutCompat;
 
-    FirebaseAuth firebaseAuth;
-    FirebaseFirestore firebaseFirestore;
+    AuthFirebaseProvider authFirebaseProvider;
+    UsersFirestoreProvider usersFirestoreProvider;
+
     private GoogleSignInClient googleSignInClient;
 
     private final int RC_SIGN_IN_GOOGLE = 1;
@@ -53,8 +55,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         getViewId();
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
+        authFirebaseProvider = new AuthFirebaseProvider();
+        usersFirestoreProvider = new UsersFirestoreProvider();
+
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -84,10 +87,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String email = txt_email.getText().toString();
         String clave = txt_password.getText().toString();
 
+        linearLayoutCompat.setVisibility(View.VISIBLE);
+
         if(!email.isEmpty() && !clave.isEmpty()) {
-            firebaseAuth.signInWithEmailAndPassword(email, clave).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            authFirebaseProvider.login(email, clave).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
+                    linearLayoutCompat.setVisibility(View.INVISIBLE);
                     if(task.isSuccessful()){
                         Toast.makeText(LoginActivity.this, "INGRESO CORRECTO", Toast.LENGTH_SHORT).show();
                         goToView(MainActivity.class);
@@ -127,19 +133,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
+        linearLayoutCompat.setVisibility(View.VISIBLE);
+
+        authFirebaseProvider.loginGoogle(idToken).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("SIGNIN", "signInWithCredential:success");
                             Toast.makeText(LoginActivity.this, "INICIO DE SESION CORRECTO", Toast.LENGTH_SHORT).show();
-                            String idDoc = firebaseAuth.getCurrentUser().getUid();
-                            checkUserExist(idDoc);
+                            checkUserExist(authFirebaseProvider.getFirebaseUid());
                         } else {
                             // If sign in fails, display a message to the user.
+                            linearLayoutCompat.setVisibility(View.INVISIBLE);
                             Log.w("ERROR", "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "ERROR AL INICIAR SESION", Toast.LENGTH_SHORT).show();
                         }
@@ -149,22 +156,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     // Consulta el doc para verificar si existe el usuario para posterior guardarlo en la BD
     private void checkUserExist(final String idDoc) {
-        firebaseFirestore.collection("Users").document(idDoc).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        usersFirestoreProvider.readUsers(idDoc).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
                     // Si el usuario existe en la BD inicia session
+                    linearLayoutCompat.setVisibility(View.INVISIBLE);
                     goToView(MainActivity.class);
                 } else {
                     // Caso contrario, el usuario nuevo sera almacenado en la BD e inicia session
-                    String email = firebaseAuth.getCurrentUser().getEmail();
+                    Users u = new Users();
 
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("email", email);
+                    u.setId_users(idDoc);
+                    u.setEmail(authFirebaseProvider.getFirebaseEmail());
 
-                    firebaseFirestore.collection("Users").document(idDoc).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    usersFirestoreProvider.createUsers(u).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            linearLayoutCompat.setVisibility(View.INVISIBLE);
                             if (task.isSuccessful()) {
                                 goToView(ProfileCompleteActivity.class);
                             } else {
@@ -189,6 +198,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         btn_signInGoogle = findViewById(R.id.id_btn_signInGoogle);
         btn_signInGoogle.setOnClickListener(this);
+
+        progressBar = findViewById(R.id.id_spinkit_progress);
+        FadingCircle fadingCircle = new FadingCircle();
+        progressBar.setIndeterminateDrawable(fadingCircle);
+        progressBar.setIndeterminateTintMode(PorterDuff.Mode.SCREEN);
+
+        linearLayoutCompat = findViewById(R.id.id_linearLayout_transparent);
+        linearLayoutCompat.setVisibility(View.INVISIBLE);
     }
 
     private void goToView(Class activiyClass) {

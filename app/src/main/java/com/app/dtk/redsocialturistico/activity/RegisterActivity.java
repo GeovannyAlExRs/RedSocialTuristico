@@ -3,13 +3,20 @@ package com.app.dtk.redsocialturistico.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.LinearLayoutCompat;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.app.dtk.redsocialturistico.R;
+import com.app.dtk.redsocialturistico.model.Users;
+import com.app.dtk.redsocialturistico.providers.AuthFirebaseProvider;
+import com.app.dtk.redsocialturistico.providers.UsersFirestoreProvider;
+import com.github.ybq.android.spinkit.style.FadingCircle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -30,9 +37,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private CircleImageView imageViewBack;
     private TextInputEditText txt_nameUser, txt_email, txt_password, confirmPassword;
     private AppCompatButton btn_register;
+    private ProgressBar progressBar;
+    private LinearLayoutCompat linearLayoutCompat;
 
-    FirebaseAuth firebaseAuth;
-    FirebaseFirestore firebaseFirestore;
+    AuthFirebaseProvider authFirebaseProvider;
+    UsersFirestoreProvider usersFirestoreProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +49,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_register);
 
         getViewId();
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
+        authFirebaseProvider = new AuthFirebaseProvider();
+        usersFirestoreProvider = new UsersFirestoreProvider();
     }
 
     private void getViewId() {
@@ -55,6 +64,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         btn_register = findViewById(R.id.id_btn_register);
         btn_register.setOnClickListener(this);
+
+        progressBar = findViewById(R.id.id_spinkit_progress);
+        FadingCircle fadingCircle = new FadingCircle();
+        progressBar.setIndeterminateDrawable(fadingCircle);
+        progressBar.setIndeterminateTintMode(PorterDuff.Mode.SCREEN);
+
+        linearLayoutCompat = findViewById(R.id.id_linearLayout_transparent);
+        linearLayoutCompat.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -99,26 +116,33 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void saveUser(final String nameUser, final String email, final String password) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+        linearLayoutCompat.setVisibility(View.VISIBLE);
+
+        authFirebaseProvider.register(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    String idDoc = firebaseAuth.getCurrentUser().getUid();
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("userName", nameUser);
-                    map.put("email", email);
-                    map.put("password", password);
-                    firebaseFirestore.collection("Users").document(idDoc).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    Users u = new Users();
+
+                    u.setId_users(authFirebaseProvider.getFirebaseUid());
+                    u.setUsername(nameUser);
+                    u.setEmail(email);
+
+                    usersFirestoreProvider.createUsers(u).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            linearLayoutCompat.setVisibility(View.INVISIBLE);
                             if(task.isSuccessful()){
                                 Toast.makeText(RegisterActivity.this, "El usuario se registro correctamente en la BD", Toast.LENGTH_SHORT).show();
+                                goToView(MainActivity.class);
                             } else {
                                 Toast.makeText(RegisterActivity.this, "El usuario NO se registro correctamente en la BD", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
                 } else {
+                    linearLayoutCompat.setVisibility(View.INVISIBLE);
                     Toast.makeText(RegisterActivity.this, "El usuario NO se registro correctamente", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -134,6 +158,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private void goToView(Class activiyClass) {
         Intent intent = new Intent(this, activiyClass);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 }

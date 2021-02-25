@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.app.dtk.redsocialturistico">
+    package="com.app.dtk.redsocialturistico" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -10,12 +10,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".activity.ProfileCompleteActivity"></activity>
+        android:theme="@style/AppTheme" >
+        <activity android:name=".activity.PostActivity" >
+        </activity>
+        <activity android:name=".activity.ProfileCompleteActivity" />
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.MainActivity" />
-        <activity android:name=".activity.SplashActivity">
+        <activity android:name=".activity.SplashActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

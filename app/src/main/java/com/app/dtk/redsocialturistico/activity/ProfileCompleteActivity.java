@@ -3,13 +3,20 @@ package com.app.dtk.redsocialturistico.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.LinearLayoutCompat;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.app.dtk.redsocialturistico.R;
+import com.app.dtk.redsocialturistico.model.Users;
+import com.app.dtk.redsocialturistico.providers.AuthFirebaseProvider;
+import com.app.dtk.redsocialturistico.providers.UsersFirestoreProvider;
+import com.github.ybq.android.spinkit.style.FadingCircle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -23,9 +30,11 @@ public class ProfileCompleteActivity extends AppCompatActivity implements View.O
 
     private TextInputEditText txt_nameUser;
     private AppCompatButton btn_confirm;
+    private ProgressBar progressBar;
+    private LinearLayoutCompat linearLayoutCompat;
 
-    FirebaseAuth firebaseAuth;
-    FirebaseFirestore firebaseFirestore;
+    AuthFirebaseProvider authFirebaseProvider;
+    UsersFirestoreProvider usersFirestoreProvider;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +42,8 @@ public class ProfileCompleteActivity extends AppCompatActivity implements View.O
         setContentView(R.layout.activity_profile_complete);
 
         getViewId();
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
+        authFirebaseProvider = new AuthFirebaseProvider();
+        usersFirestoreProvider = new UsersFirestoreProvider();
     }
     private void getViewId() {
 
@@ -42,6 +51,14 @@ public class ProfileCompleteActivity extends AppCompatActivity implements View.O
 
         btn_confirm = findViewById(R.id.id_btn_confirm);
         btn_confirm.setOnClickListener(this);
+
+        progressBar = findViewById(R.id.id_spinkit_progress);
+        FadingCircle fadingCircle = new FadingCircle();
+        progressBar.setIndeterminateDrawable(fadingCircle);
+        progressBar.setIndeterminateTintMode(PorterDuff.Mode.SCREEN);
+
+        linearLayoutCompat = findViewById(R.id.id_linearLayout_transparent);
+        linearLayoutCompat.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -64,14 +81,18 @@ public class ProfileCompleteActivity extends AppCompatActivity implements View.O
     }
 
     private void updateUser(final String nameUser) {
-        String idDoc = firebaseAuth.getCurrentUser().getUid();
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("userName", nameUser);
+        linearLayoutCompat.setVisibility(View.VISIBLE);
 
-        firebaseFirestore.collection("Users").document(idDoc).update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        Users u = new Users();
+
+        u.setId_users(authFirebaseProvider.getFirebaseUid());
+        u.setUsername(nameUser);
+
+        usersFirestoreProvider.updateUsers(u).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                linearLayoutCompat.setVisibility(View.INVISIBLE);
                 if(task.isSuccessful()){
                     Toast.makeText(ProfileCompleteActivity.this, "El usuario se registro correctamente en la BD", Toast.LENGTH_SHORT).show();
                     goToView(MainActivity.class);
