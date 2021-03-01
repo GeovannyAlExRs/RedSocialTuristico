@@ -43,6 +43,12 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:26.4.0')
     implementation 'com.google.firebase:firebase-firestore'
 
+    // Dependency Firebase Storage
+    implementation 'com.google.firebase:firebase-storage'
+
+    implementation 'id.zelory:compressor:2.1.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
     // Dependency Progress Android Spinkit
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'

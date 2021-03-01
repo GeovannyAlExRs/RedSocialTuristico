@@ -37,7 +37,9 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="horizontal"
-              android:layout_margin="10dp">
+              android:layout_marginTop="@dimen/space8"
+              android:layout_marginLeft="@dimen/space16"
+              android:layout_marginRight="@dimen/space16">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
@@ -45,13 +47,14 @@
                 app:cardBackgroundColor="@color/colorWhite"
                 android:layout_weight="1"
                 android:layout_margin="@dimen/space8"
-                app:cardCornerRadius="@dimen/space16">
+                app:cardCornerRadius="@dimen/round5">
 
               <ImageView
+                  android:id="@+id/id_img_post1"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:src="@drawable/ic_images_solid"
-                  android:layout_margin="@dimen/space24"/>
+                  android:scaleType="fitCenter"/>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -60,13 +63,14 @@
                 app:cardBackgroundColor="@color/colorWhite"
                 android:layout_weight="1"
                 android:layout_margin="@dimen/space8"
-                app:cardCornerRadius="@dimen/space16">
+                app:cardCornerRadius="@dimen/round5">
 
               <ImageView
+                  android:id="@+id/id_img_post2"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:src="@drawable/ic_images_solid"
-                  android:layout_margin="@dimen/space24"/>
+                  android:scaleType="fitCenter"/>
             </androidx.cardview.widget.CardView>
 
           </androidx.appcompat.widget.LinearLayoutCompat>
@@ -152,46 +156,25 @@
             </com.google.android.material.textfield.TextInputLayout>
           </androidx.appcompat.widget.LinearLayoutCompat>
 
-          <androidx.appcompat.widget.LinearLayoutCompat
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal"
-              android:layout_margin="2dp">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Precio"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:passwordToggleEnabled="true">
-
-              <com.google.android.material.textfield.TextInputEditText
-                  android:id="@+id/id_txt_price_post"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:inputType="text"
-                  android:textSize="@dimen/h5"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-          </androidx.appcompat.widget.LinearLayoutCompat>
-
           <TextView
+              android:id="@+id/id_txt_category"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="CATEGORIA"
               android:textAlignment="center"
-              android:layout_marginTop="10dp"/>
+              android:layout_marginTop="5dp"/>
 
           <View
               android:layout_width="match_parent"
               android:layout_height="1dp"
               android:background="@color/colorWhiteDark"
-              android:layout_margin="@dimen/space8"></View>
+              android:layout_margin="5dp"></View>
 
           <androidx.appcompat.widget.LinearLayoutCompat
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="horizontal">
+              android:orientation="horizontal"
+              android:layout_marginTop="@dimen/space8">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="0dp"
@@ -206,6 +189,7 @@
                   app:cardBackgroundColor="@color/colorBackgroundContainer">
 
                 <ImageView
+                    android:id="@+id/id_img_ic_deporte"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_futbol_regular"
@@ -234,6 +218,7 @@
                   app:cardBackgroundColor="@color/colorBackgroundContainer">
 
                 <ImageView
+                    android:id="@+id/id_img_ic_hotel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_hotel_solid"
@@ -263,6 +248,7 @@
                   app:cardBackgroundColor="@color/colorBackgroundContainer">
 
                 <ImageView
+                    android:id="@+id/id_img_ic_playa"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_umbrella_beach_solid"
@@ -291,6 +277,7 @@
                   app:cardBackgroundColor="@color/colorBackgroundContainer">
 
                 <ImageView
+                    android:id="@+id/id_img_ic_restaurante"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_utensils_solid"
@@ -325,4 +312,59 @@
       </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.core.widget.NestedScrollView>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/id_circleBack"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/ic_angle_left_solid"/>
+
+  <!-- Alert Dialog SpinKit -->
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:id="@+id/id_linearLayout_transparent"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+      android:padding="75dp"
+      android:gravity="center"
+      android:background="@color/colorTransparent">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="vertical"
+          android:layout_margin="10dp">
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/id_spinkit_progress"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            style="@style/SpinKitView.Large.DoubleBounce"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:SpinKit_Color="@color/colorPrimaryLight" />
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:layout_marginTop="@dimen/space8"
+          android:fontFamily="@font/comfortaa"
+          android:text="Loading..."
+          android:textColor="@color/colorWhiteDark"
+          android:textSize="@dimen/p"
+          android:textStyle="bold" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.appcompat.widget.LinearLayoutCompat>
+
   </androidx.coordinatorlayout.widget.CoordinatorLayout>
