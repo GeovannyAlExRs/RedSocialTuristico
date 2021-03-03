@@ -24,6 +24,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -35,7 +36,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     private CircleImageView imageViewBack;
-    private TextInputEditText txt_nameUser, txt_email, txt_password, confirmPassword;
+    private TextInputEditText txt_nameUser, txt_email, txt_phone, txt_password, confirmPassword;
     private AppCompatButton btn_register;
     private ProgressBar progressBar;
     private LinearLayoutCompat linearLayoutCompat;
@@ -59,6 +60,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         txt_nameUser = findViewById(R.id.id_txt_nameUser);
         txt_email = findViewById(R.id.id_txt_email);
+        txt_phone = findViewById(R.id.id_txt_phone);
         txt_password = findViewById(R.id.id_txt_password);
         confirmPassword = findViewById(R.id.id_txt_confirmPassword);
 
@@ -90,15 +92,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private void goRegister() {
         final String nameUser = txt_nameUser.getText().toString();
         final String email = txt_email.getText().toString();
+        final String phone = txt_phone.getText().toString();
         final String password = txt_password.getText().toString();
         final String confirmPassword = this.confirmPassword.getText().toString();
 
-        if(!nameUser.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()) {
+        if(!nameUser.isEmpty() && !email.isEmpty() && !phone.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()) {
             if (isEmailValid(email)) {
                 if (password.equals(confirmPassword)) {
                     Toast.makeText(this, "Bienvenido " + nameUser,Toast.LENGTH_LONG).show();
                     if (password.length() >= 8) {
-                        saveUser(nameUser, email, password);
+                        saveUser(nameUser, email, phone, password);
                     } else {
                         Toast.makeText(this, "La clave debe ser mayor a 8 caracteres",Toast.LENGTH_LONG).show();
                     }
@@ -115,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private void saveUser(final String nameUser, final String email, final String password) {
+    private void saveUser(final String nameUser, final String email, final String phone, final String password) {
 
         linearLayoutCompat.setVisibility(View.VISIBLE);
 
@@ -128,6 +131,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     u.setId_users(authFirebaseProvider.getFirebaseUid());
                     u.setUsername(nameUser);
                     u.setEmail(email);
+                    u.setPhone(phone);
+                    u.setTimestamp(new Date().getTime());
 
                     usersFirestoreProvider.createUsers(u).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override

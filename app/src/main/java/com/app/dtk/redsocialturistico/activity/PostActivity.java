@@ -329,6 +329,7 @@ public class PostActivity extends AppCompatActivity implements View.OnClickListe
                                     p.setReference(reference);
                                     p.setCategory(category);
                                     p.setIdUsers(authFirebaseProvider.getFirebaseUid());
+                                    p.setTimestamp(new Date().getTime());
 
                                     createPostFirestore(p);
                                 }

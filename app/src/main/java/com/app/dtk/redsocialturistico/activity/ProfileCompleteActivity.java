@@ -20,15 +20,12 @@ import com.github.ybq.android.spinkit.style.FadingCircle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 
 public class ProfileCompleteActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private TextInputEditText txt_nameUser;
+    private TextInputEditText txt_nameUser, txt_phone;
     private AppCompatButton btn_confirm;
     private ProgressBar progressBar;
     private LinearLayoutCompat linearLayoutCompat;
@@ -48,6 +45,7 @@ public class ProfileCompleteActivity extends AppCompatActivity implements View.O
     private void getViewId() {
 
         txt_nameUser = findViewById(R.id.id_txt_nameUser);
+        txt_phone = findViewById(R.id.id_txt_phone);
 
         btn_confirm = findViewById(R.id.id_btn_confirm);
         btn_confirm.setOnClickListener(this);
@@ -72,15 +70,16 @@ public class ProfileCompleteActivity extends AppCompatActivity implements View.O
 
     private void goRegister() {
         final String nameUser = txt_nameUser.getText().toString();
+        final String phone = txt_phone.getText().toString();
 
-        if(!nameUser.isEmpty()) {
-            updateUser(nameUser);
+        if(!nameUser.isEmpty() && !phone.isEmpty()) {
+            updateUser(nameUser, phone);
         } else {
             Toast.makeText(this, "Ingresa todos los campos",Toast.LENGTH_LONG).show();
         }
     }
 
-    private void updateUser(final String nameUser) {
+    private void updateUser(String nameUser, final String phone) {
 
         linearLayoutCompat.setVisibility(View.VISIBLE);
 
@@ -88,6 +87,8 @@ public class ProfileCompleteActivity extends AppCompatActivity implements View.O
 
         u.setId_users(authFirebaseProvider.getFirebaseUid());
         u.setUsername(nameUser);
+        u.setPhone(phone);
+        u.setTimestamp(new Date().getTime());
 
         usersFirestoreProvider.updateUsers(u).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

@@ -5,6 +5,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class AuthFirebaseProvider {
@@ -40,6 +41,20 @@ public class AuthFirebaseProvider {
             return firebaseAuth.getCurrentUser().getEmail();
         } else {
             return null;
+        }
+    }
+
+    public FirebaseUser getUserSession() {
+        if (firebaseAuth.getCurrentUser() != null) {
+            return firebaseAuth.getCurrentUser();
+        } else {
+            return null;
+        }
+    }
+
+    public void logout() {
+        if (firebaseAuth != null){
+            firebaseAuth.signOut();
         }
     }
 }

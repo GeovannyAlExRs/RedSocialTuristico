@@ -10,11 +10,12 @@ public class Post {
     private String img2;
     private String category;
     private String idUsers;
+    private long timestamp;
 
     public Post() {
     }
 
-    public Post(String id_post, String title, String description, String reference, String img1, String img2, String category, String idUsers) {
+    public Post(String id_post, String title, String description, String reference, String img1, String img2, String category, String idUsers, long timestamp) {
         this.id_post = id_post;
         this.title = title;
         this.description = description;
@@ -23,6 +24,7 @@ public class Post {
         this.img2 = img2;
         this.category = category;
         this.idUsers = idUsers;
+        this.timestamp = timestamp;
     }
 
     public String getId_post() {
@@ -87,5 +89,13 @@ public class Post {
 
     public void setIdUsers(String idUsers) {
         this.idUsers = idUsers;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

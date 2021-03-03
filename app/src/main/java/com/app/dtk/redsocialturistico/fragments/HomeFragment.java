@@ -3,17 +3,30 @@ package com.app.dtk.redsocialturistico.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.app.dtk.redsocialturistico.R;
 import com.app.dtk.redsocialturistico.activity.LoginActivity;
 import com.app.dtk.redsocialturistico.activity.PostActivity;
-import com.app.dtk.redsocialturistico.activity.RegisterActivity;
+import com.app.dtk.redsocialturistico.adapters.AdapterPost;
+import com.app.dtk.redsocialturistico.model.Post;
+import com.app.dtk.redsocialturistico.providers.AuthFirebaseProvider;
+import com.app.dtk.redsocialturistico.providers.PostFirebaseProvider;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.Query;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,8 +44,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private String mParam1;
     private String mParam2;
 
-    private View view;
+    //private View view;
     private FloatingActionButton floatingActionButton;
+
+    private Toolbar toolbar;
+    RecyclerView recyclerView;
+
+    AdapterPost adapterPost;
+
+    AuthFirebaseProvider authFirebaseProvider;
+    PostFirebaseProvider postFirebaseProvider;
+
+    private static final int OPTIONVIEW1 = 1;
+    private static final int OPTIONVIEW2 = 2;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -68,24 +92,85 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //MyToolbar.showToolbar((AppCompatActivity) getActivity(), "Maps Here", true);
+
+        authFirebaseProvider = new AuthFirebaseProvider();
+        postFirebaseProvider = new PostFirebaseProvider();
+
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_home, container, false);
-        floatingActionButton = view.findViewById(R.id.id_floating_new_post);
-        floatingActionButton.setOnClickListener(this);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        init(view);
+
         return view;
+    }
+
+    private void init(View v) {
+        toolbar = v.findViewById(R.id.id_toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Publicaciones");
+        setHasOptionsMenu(true);
+        //((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        recyclerView = v.findViewById(R.id.id_post_recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        //recyclerView.setHasFixedSize(true);
+
+        floatingActionButton = v.findViewById(R.id.id_floating_new_post);
+        floatingActionButton.setOnClickListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Query query = postFirebaseProvider.readPost();
+        FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>().setQuery(query, Post.class).build();
+        adapterPost = new AdapterPost(options, getContext());
+        recyclerView.setAdapter(adapterPost);
+        adapterPost.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapterPost.stopListening();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.id_action_logout) {
+            logout();
+        }
+        return true;
+    }
+
+    private void logout() {
+        authFirebaseProvider.logout();
+        goToView(LoginActivity.class, OPTIONVIEW2);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.id_floating_new_post:
-                goToView(PostActivity.class);
+                goToView(PostActivity.class, OPTIONVIEW1);
                 break;
         }
     }
 
-    private void goToView(Class activiyClass) {
+    private void goToView(Class activiyClass, int option) {
         Intent intent = new Intent(getContext(), activiyClass);
-        startActivity(intent);
+        if (option == 1) {
+            startActivity(intent);
+        } else {
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
     }
 }

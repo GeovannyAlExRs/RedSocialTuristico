@@ -13,6 +13,7 @@
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="colorControlNormal">@color/colorWhite</item>
         <item name="titleTextColor">@color/colorWhiteDark</item>
+        <item name="android:textSize">@dimen/p</item>
     </style>
 
 </resources>

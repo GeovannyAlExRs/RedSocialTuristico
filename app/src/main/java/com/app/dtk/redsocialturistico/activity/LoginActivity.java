@@ -48,6 +48,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private final int RC_SIGN_IN_GOOGLE = 1;
 
+    private static final int OPTIONVIEW1 = 1;
+    private static final int OPTIONVIEW2 = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.id_txt_register:
-                goToView(RegisterActivity.class);
+                goToView(RegisterActivity.class, OPTIONVIEW1);
                 break;
             case R.id.id_btn_login:
                 //goToView(MainActivity.class);
@@ -96,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     linearLayoutCompat.setVisibility(View.INVISIBLE);
                     if(task.isSuccessful()){
                         Toast.makeText(LoginActivity.this, "INGRESO CORRECTO", Toast.LENGTH_SHORT).show();
-                        goToView(MainActivity.class);
+                        goToView(MainActivity.class, OPTIONVIEW2);
                     } else {
                         Toast.makeText(LoginActivity.this, "Email o clave son incorrectos", Toast.LENGTH_SHORT).show();
                     }
@@ -105,6 +108,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.d("ENTRADA", "email: " + email + ", password: " + clave);
         } else {
             Toast.makeText(LoginActivity.this, "Ingresa los datos.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (authFirebaseProvider.getUserSession() != null) {
+            goToView(MainActivity.class, OPTIONVIEW2);
         }
     }
 
@@ -162,7 +173,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (documentSnapshot.exists()) {
                     // Si el usuario existe en la BD inicia session
                     linearLayoutCompat.setVisibility(View.INVISIBLE);
-                    goToView(MainActivity.class);
+                    goToView(MainActivity.class, OPTIONVIEW1);
                 } else {
                     // Caso contrario, el usuario nuevo sera almacenado en la BD e inicia session
                     Users u = new Users();
@@ -175,7 +186,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         public void onComplete(@NonNull Task<Void> task) {
                             linearLayoutCompat.setVisibility(View.INVISIBLE);
                             if (task.isSuccessful()) {
-                                goToView(ProfileCompleteActivity.class);
+                                goToView(ProfileCompleteActivity.class, OPTIONVIEW1);
                             } else {
                                 Toast.makeText(LoginActivity.this, "ERROR AL INICIAR SESION GOOGLE", Toast.LENGTH_SHORT).show();
                             }
@@ -208,8 +219,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         linearLayoutCompat.setVisibility(View.INVISIBLE);
     }
 
-    private void goToView(Class activiyClass) {
+    private void goToView(Class activiyClass, int option) {
         Intent intent = new Intent(LoginActivity.this, activiyClass);
-        startActivity(intent);
+        if (option == 1) {
+            startActivity(intent);
+        } else {
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
     }
 }
